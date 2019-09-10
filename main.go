@@ -45,6 +45,8 @@ func main() {
 		}
 		return nil
 	})
+	content = append(content, "\n")
 
 	ioutil.WriteFile("code/generate.go", []byte(strings.Join(content, "\n")), 0660)
+	ioutil.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
 }
