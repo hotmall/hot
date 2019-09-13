@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"syscall"
 )
 
 func main() {
@@ -22,8 +21,8 @@ func main() {
 		"runtime/var/log",
 	}
 
-	mask := syscall.Umask(0)
-	defer syscall.Umask(mask)
+	mask := umask(0)
+	defer umask(mask)
 
 	for _, dir := range dirs {
 		fmt.Println(dir)
@@ -32,12 +31,12 @@ func main() {
 
 	var content []string
 	content = append(content, "package main\n")
-	filepath.Walk("api", func(path string, f os.FileInfo, err error) error {
-		if f == nil {
+	filepath.Walk("api", func(path string, info os.FileInfo, err error) error {
+		if info == nil {
 			return nil
 		}
-		if f.IsDir() {
-			return nil
+		if info.IsDir() && info.Name() == "types" {
+			return filepath.SkipDir
 		}
 
 		if strings.HasSuffix(path, ".raml") {
