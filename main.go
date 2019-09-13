@@ -40,7 +40,7 @@ func main() {
 		}
 
 		if strings.HasSuffix(path, ".raml") {
-			content = append(content, fmt.Sprintf("//go:generate go-raml server --kind gorestful --ramlfile ../%s --no-apidocs", path))
+			content = append(content, fmt.Sprintf("//go:generate go-raml server --kind gorestful --ramlfile ../%s --no-apidocs", strings.Replace(path, "\\", "/", -1)))
 		}
 		return nil
 	})
