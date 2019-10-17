@@ -2,50 +2,98 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
-	"path/filepath"
-	"strings"
+
+	"github.com/hotmall/orange/commands"
+	"github.com/urfave/cli"
+)
+
+var (
+	//ApplicationName is the name of the application
+	ApplicationName = "Orange"
+)
+
+var (
+	serverCommand = &commands.ServerCommand{}
+	clientCommand = &commands.ClientCommand{}
 )
 
 func main() {
-	dirs := []string{
-		"api",
-		"code",
-		"dist",
-		"runtime",
-		"runtime/bin",
-		"runtime/etc/conf",
-		"runtime/namedsql/mysql",
-		"runtime/root",
-		"runtime/var/log",
+	cli.VersionPrinter = func(c *cli.Context) {
+		fmt.Printf("Version: \t\t%v\nCommit Hash: \t\t%v\nBuild Date: \t\t%v\nGo Version: \t\t%v",
+			commands.Version, commands.CommitHash, commands.BuildDate, commands.GoVersion)
 	}
 
-	mask := umask(0)
-	defer umask(mask)
+	app := cli.NewApp()
+	app.Name = ApplicationName
+	app.Version = commands.Version
+	app.Usage = "Generate a generate.go file from the raml files in the api directory."
 
-	for _, dir := range dirs {
-		fmt.Println(dir)
-		os.MkdirAll(dir, 0755)
+	//log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
+
+	app.Commands = []cli.Command{
+		{
+			Name:  "server",
+			Usage: "Generate a server according to a RAML specification",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:        "language, l",
+					Value:       "go",
+					Usage:       "Language to construct a server for",
+					Destination: &serverCommand.Language,
+				},
+				cli.StringFlag{
+					Name:        "kind",
+					Value:       "gorestful",
+					Usage:       "Kind of server to generate (gorestful)",
+					Destination: &serverCommand.Kind,
+				},
+			},
+			Action: func(c *cli.Context) {
+				if err := serverCommand.Execute(); err != nil {
+					//log.Error(err)
+					fmt.Println(err)
+				}
+			},
+		},
+		{
+			Name:  "client",
+			Usage: "Create a client for a RAML specification",
+
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:        "language, l",
+					Value:       "go",
+					Usage:       "Language to construct a client for",
+					Destination: &clientCommand.Language,
+				},
+
+				cli.StringFlag{
+					Name:        "kind",
+					Value:       "requests",
+					Usage:       "Kind of client to generate (requests,grequests)",
+					Destination: &clientCommand.Kind,
+				},
+				cli.StringFlag{
+					Name:        "package",
+					Value:       "client",
+					Usage:       "package name",
+					Destination: &clientCommand.PackageName,
+				},
+			},
+			Action: func(c *cli.Context) {
+				if err := clientCommand.Execute(); err != nil {
+					//log.Error(err)
+					fmt.Println(err)
+				}
+			},
+		},
+	}
+	app.Action = func(c *cli.Context) {
+		cli.ShowAppHelp(c)
 	}
 
-	var content []string
-	content = append(content, "package main\n")
-	filepath.Walk("api", func(path string, info os.FileInfo, err error) error {
-		if info == nil {
-			return nil
-		}
-		if info.IsDir() && info.Name() == "types" {
-			return filepath.SkipDir
-		}
-
-		if strings.HasSuffix(path, ".raml") {
-			content = append(content, fmt.Sprintf("//go:generate go-raml server --kind gorestful --ramlfile ../%s --no-apidocs", strings.Replace(path, "\\", "/", -1)))
-		}
-		return nil
-	})
-	content = append(content, "\n")
-
-	ioutil.WriteFile("code/generate.go", []byte(strings.Join(content, "\n")), 0660)
-	ioutil.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
+	if err := app.Run(os.Args); err != nil {
+		os.Exit(1)
+	}
 }
