@@ -20,7 +20,7 @@ var (
 
 func main() {
 	cli.VersionPrinter = func(c *cli.Context) {
-		fmt.Printf("Version: \t\t%v\nCommit Hash: \t\t%v\nBuild Date: \t\t%v\nGo Version: \t\t%v",
+		fmt.Printf("Version: \t\t%v\nCommit Hash: \t\t%v\nBuild Date: \t\t%v\nGo Version: \t\t%v\n",
 			commands.Version, commands.CommitHash, commands.BuildDate, commands.GoVersion)
 	}
 
