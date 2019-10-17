@@ -32,7 +32,7 @@ func (command *ClientCommand) Execute() error {
 		}
 
 		if strings.HasSuffix(path, ".raml") {
-			content = append(content, fmt.Sprintf("//go:generate go-raml client --language %s --kind %s --package %s --ramlfile ../%s", command.Language, command.Kind, command.PackageName, strings.Replace(path, "\\", "/", -1)))
+			content = append(content, fmt.Sprintf("//go:generate go-raml client --language %s --kind %s --package %s --ramlfile %s", command.Language, command.Kind, command.PackageName, strings.Replace(path, "\\", "/", -1)))
 		}
 		return nil
 	})
