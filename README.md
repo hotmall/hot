@@ -1,5 +1,6 @@
 # Hot
 
+```shell
 NAME:
    Hot - Generate a generate.go file from the raml files in the api directory.
 
@@ -17,3 +18,4 @@ COMMANDS:
 GLOBAL OPTIONS:
    --help, -h     show help
    --version, -v  print the version
+```
