@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hotmall/orange/commands"
+	"github.com/hotmall/hot/commands"
 	"github.com/urfave/cli"
 )
 
 var (
 	//ApplicationName is the name of the application
-	ApplicationName = "Orange"
+	ApplicationName = "Hot"
 )
 
 var (

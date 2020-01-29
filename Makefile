@@ -1,6 +1,6 @@
 PACKAGES = $(shell go list ./... | grep -v '/vendor/')
 
-PACKAGE = github.com/hotmall/orange
+PACKAGE = github.com/hotmall/hot
 COMMIT_HASH = $(shell git rev-parse --short HEAD 2>/dev/null)
 BUILD_DATE = $(shell date +%FT%T%z)
 SERVICE_VERSION = $(shell cat VERSION)
