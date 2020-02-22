@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/hotmall/hot/commands"
 	"github.com/urfave/cli"
@@ -29,7 +30,10 @@ func main() {
 	app.Version = commands.Version
 	app.Usage = "Generate a generate.go file from the raml files in the api directory."
 
-	//log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
+	module := "Hot"
+	if currDir, err := filepath.Abs("."); err == nil {
+		module = filepath.Base(currDir)
+	}
 
 	app.Commands = []cli.Command{
 		{
@@ -47,6 +51,12 @@ func main() {
 					Value:       "gorestful",
 					Usage:       "Kind of server to generate (gorestful)",
 					Destination: &serverCommand.Kind,
+				},
+				cli.StringFlag{
+					Name:        "module",
+					Value:       module,
+					Usage:       "Module name for go mod",
+					Destination: &serverCommand.Module,
 				},
 			},
 			Action: func(c *cli.Context) {

@@ -1,0 +1,9 @@
+github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/hotmall/hot v0.0.0-20200129043202-580fa791b289 h1:Kt1qhfRW4nqbeUGFVSWCdy9sTCgpDACzVpIKNUrzlZA=
+github.com/hotmall/hot v0.0.0-20200129043202-580fa791b289/go.mod h1:FIV6RAY331cDvW0xUy5Zz4vLKh1CM6tKEhToSzbPdoE=
+github.com/hotmall/orange v0.0.0-20200129043202-580fa791b289 h1:un9t8UFiQlAQjgjaPkoSjhM9uWn9yi3XInHPFn8w17c=
+github.com/hotmall/orange v0.0.0-20200129043202-580fa791b289/go.mod h1:HCjKVWfQkM4p56B6tMrZRoUp5fml8IX5SVy3o9VJSyU=
+github.com/urfave/cli v1.21.0 h1:wYSSj06510qPIzGSua9ZqsncMmWE3Zr55KBERygyrxE=
+github.com/urfave/cli v1.21.0/go.mod h1:lxDj6qX9Q6lWQxIrbrT0nwecwUtRnhVZAJjJZrVUZZQ=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

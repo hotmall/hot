@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
 	//log "github.com/Sirupsen/logrus"
 	"github.com/hotmall/orange/utils"
 )
@@ -14,6 +15,7 @@ import (
 type ServerCommand struct {
 	Language string // target language
 	Kind     string
+	Module   string
 }
 
 // Execute generates a Go server from an RAML specification
@@ -52,7 +54,7 @@ func (command *ServerCommand) Execute() error {
 		}
 
 		if strings.HasSuffix(path, ".raml") {
-			content = append(content, fmt.Sprintf("//go:generate go-raml server --language %s --kind %s --ramlfile ../%s --no-apidocs", command.Language, command.Kind, strings.Replace(path, "\\", "/", -1)))
+			content = append(content, fmt.Sprintf("//go:generate go-raml server --language %s --kind %s --ramlfile ../%s --no-apidocs --import-path %s", command.Language, command.Kind, strings.Replace(path, "\\", "/", -1), command.Module))
 		}
 		return nil
 	})
