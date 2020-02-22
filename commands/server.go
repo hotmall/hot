@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	//log "github.com/Sirupsen/logrus"
-	"github.com/hotmall/orange/utils"
+	"github.com/tsingtaohot/hot/utils"
 )
 
 // ServerCommand is executed to generate a go server from a RAML specification

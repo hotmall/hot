@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
+	"strings"
 
-	"github.com/hotmall/hot/commands"
+	"github.com/tsingtaohot/hot/commands"
 	"github.com/urfave/cli"
 )
 
@@ -19,6 +21,34 @@ var (
 	clientCommand = &commands.ClientCommand{}
 )
 
+func getModule() string {
+	gopath, err := filepath.Abs(os.Getenv("GOPATH"))
+	if err != nil {
+		fmt.Println("Fail to get env GOPATH, err=", err)
+		return ""
+	}
+	gopath = filepath.Join(gopath, "src")
+
+	currDir, err := filepath.Abs(".")
+	if err != nil {
+		fmt.Println("Fail to get curr dir, err=", err)
+		return ""
+	}
+
+	if !strings.HasPrefix(currDir, gopath) {
+		return filepath.Base(currDir)
+	}
+
+	// set module
+	module, err := filepath.Rel(gopath, currDir)
+	if err != nil {
+		panic("Failed to set module automatically:" + err.Error())
+	}
+
+	// re-join because otherwise windows will use `\`
+	return path.Join(strings.Split(module, string(filepath.Separator))...)
+}
+
 func main() {
 	cli.VersionPrinter = func(c *cli.Context) {
 		fmt.Printf("Version: \t\t%v\nCommit Hash: \t\t%v\nBuild Date: \t\t%v\nGo Version: \t\t%v\n",
@@ -30,10 +60,7 @@ func main() {
 	app.Version = commands.Version
 	app.Usage = "Generate a generate.go file from the raml files in the api directory."
 
-	module := "Hot"
-	if currDir, err := filepath.Abs("."); err == nil {
-		module = filepath.Base(currDir)
-	}
+	module := getModule()
 
 	app.Commands = []cli.Command{
 		{
