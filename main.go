@@ -61,6 +61,7 @@ func main() {
 	app.Usage = "Generate a generate.go file from the raml files in the api directory."
 
 	module := getModule()
+	defaultPackage := filepath.Base(module)
 
 	app.Commands = []cli.Command{
 		{
@@ -113,9 +114,15 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:        "package",
-					Value:       "client",
+					Value:       defaultPackage,
 					Usage:       "package name",
 					Destination: &clientCommand.PackageName,
+				},
+				cli.StringFlag{
+					Name:        "module",
+					Value:       module,
+					Usage:       "Module name for go mod",
+					Destination: &clientCommand.Module,
 				},
 			},
 			Action: func(c *cli.Context) {

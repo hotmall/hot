@@ -12,11 +12,6 @@ import (
 	"github.com/tsingtaohot/hot/utils"
 )
 
-const mod = `module %s
-
-go %s
-`
-
 // ServerCommand is executed to generate a go server from a RAML specification
 type ServerCommand struct {
 	Language string // target language

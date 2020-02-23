@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -15,6 +16,7 @@ type ClientCommand struct {
 	Language    string
 	Kind        string
 	PackageName string
+	Module      string
 }
 
 //Execute generates a client from a RAML specification
@@ -38,7 +40,12 @@ func (command *ClientCommand) Execute() error {
 	})
 	content = append(content, "\n")
 
+	fmt.Println("generate.go")
 	ioutil.WriteFile("generate.go", []byte(strings.Join(content, "\n")), 0660)
+
+	fmt.Println("go.mod")
+	gomod := fmt.Sprintf(mod, command.Module, strings.TrimPrefix(runtime.Version(), "go"))
+	ioutil.WriteFile("go.mod", []byte(gomod), 0660)
 
 	return nil
 }

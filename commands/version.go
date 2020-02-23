@@ -1,5 +1,10 @@
 package commands
 
+const mod = `module %s
+
+go %s
+`
+
 var (
 	//Version define software version
 	Version string
