@@ -5,11 +5,17 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	//log "github.com/Sirupsen/logrus"
 	"github.com/tsingtaohot/hot/utils"
 )
+
+const mod = `module %s
+
+go %s
+`
 
 // ServerCommand is executed to generate a go server from a RAML specification
 type ServerCommand struct {
@@ -60,8 +66,15 @@ func (command *ServerCommand) Execute() error {
 	})
 	content = append(content, "\n")
 
+	fmt.Println("code/generate.go")
 	ioutil.WriteFile("code/generate.go", []byte(strings.Join(content, "\n")), 0660)
+
+	fmt.Println("code/VERSION")
 	ioutil.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
+
+	fmt.Println("code/go.mod")
+	gomod := fmt.Sprintf(mod, command.Module, strings.TrimPrefix(runtime.Version(), "go"))
+	ioutil.WriteFile("code/go.mod", []byte(gomod), 0660)
 
 	return nil
 }
