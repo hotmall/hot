@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	//log "github.com/Sirupsen/logrus"
@@ -68,7 +67,7 @@ func (command *ServerCommand) Execute() error {
 	ioutil.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
 
 	fmt.Println("code/go.mod")
-	gomod := fmt.Sprintf(mod, command.Module, strings.TrimPrefix(runtime.Version(), "go"))
+	gomod := fmt.Sprintf(mod, command.Module, getGoVersion())
 	ioutil.WriteFile("code/go.mod", []byte(gomod), 0660)
 
 	return nil

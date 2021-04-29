@@ -1,5 +1,10 @@
 package commands
 
+import (
+	"runtime"
+	"strings"
+)
+
 const mod = `module %s
 
 go %s
@@ -15,3 +20,13 @@ var (
 	// GoVersion represents the version of build go
 	GoVersion string
 )
+
+func getGoVersion() string {
+	v := runtime.Version()
+	v = strings.TrimPrefix(v, "go")
+	if strings.Count(v, ".") > 1 {
+		index := strings.LastIndex(v, ".")
+		v = v[:index]
+	}
+	return v
+}

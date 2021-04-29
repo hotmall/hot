@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -44,7 +43,7 @@ func (command *ClientCommand) Execute() error {
 	ioutil.WriteFile("generate.go", []byte(strings.Join(content, "\n")), 0660)
 
 	fmt.Println("go.mod")
-	gomod := fmt.Sprintf(mod, command.Module, strings.TrimPrefix(runtime.Version(), "go"))
+	gomod := fmt.Sprintf(mod, command.Module, getGoVersion())
 	ioutil.WriteFile("go.mod", []byte(gomod), 0660)
 
 	return nil
