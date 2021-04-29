@@ -1,4 +1,4 @@
-module github.com/tsingtaohot/hot
+module github.com/hotmall/hot
 
 go 1.13
 

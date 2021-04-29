@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tsingtaohot/hot/commands"
+	"github.com/hotmall/hot/commands"
 	"github.com/urfave/cli"
 )
 
