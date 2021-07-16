@@ -11,6 +11,11 @@ import (
 	"github.com/hotmall/hot/utils"
 )
 
+const GitIgnorePattern = `
+dist/*.zip
+runtime/bin/%s
+`
+
 // ServerCommand is executed to generate a go server from a RAML specification
 type ServerCommand struct {
 	Language string // target language
@@ -49,7 +54,8 @@ func (command *ServerCommand) Execute() error {
 		if info == nil {
 			return nil
 		}
-		if info.IsDir() && info.Name() == "types" {
+		if info.IsDir() {
+			// 所有目录下的 raml 都忽略，比如 types, traits 等
 			return filepath.SkipDir
 		}
 
@@ -69,6 +75,11 @@ func (command *ServerCommand) Execute() error {
 	fmt.Println("code/go.mod")
 	gomod := fmt.Sprintf(mod, command.Module, getGoVersion())
 	ioutil.WriteFile("code/go.mod", []byte(gomod), 0660)
+
+	fmt.Println(".gitignore")
+	exeName := filepath.Base(command.Module)
+	ignore := fmt.Sprintf(GitIgnorePattern, exeName)
+	ioutil.WriteFile(".gitignore", []byte(ignore), 0660)
 
 	return nil
 }
