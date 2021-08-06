@@ -54,7 +54,12 @@ func (command *ServerCommand) Execute() error {
 		if info == nil {
 			return nil
 		}
+		fmt.Println("--", path)
 		if info.IsDir() {
+			if info.Name() == path {
+				// 如果是 root 目录，返回 nil
+				return nil
+			}
 			// 所有目录下的 raml 都忽略，比如 types, traits 等
 			return filepath.SkipDir
 		}
