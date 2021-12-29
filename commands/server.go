@@ -13,6 +13,7 @@ import (
 
 const GitIgnorePattern = `
 dist/*.zip
+dist/*.tgz
 runtime/bin/%s
 `
 
@@ -49,7 +50,12 @@ func (command *ServerCommand) Execute() error {
 	}
 
 	var content []string
-	content = append(content, "package main\n")
+	if command.Language == "go" {
+		content = append(content, "package main\n")
+	} else {
+		content = append(content, "#!/bin/bash\n")
+	}
+
 	filepath.Walk("api", func(path string, info os.FileInfo, err error) error {
 		if info == nil {
 			return nil
@@ -65,21 +71,30 @@ func (command *ServerCommand) Execute() error {
 		}
 
 		if strings.HasSuffix(path, ".raml") {
-			content = append(content, fmt.Sprintf("//go:generate go-raml server --language %s --kind %s --ramlfile ../%s --no-apidocs --import-path %s", command.Language, command.Kind, strings.Replace(path, "\\", "/", -1), command.Module))
+			if command.Language == "go" {
+				content = append(content, fmt.Sprintf("//go:generate go-raml server --language %s --kind %s --ramlfile ../%s --no-apidocs --import-path %s", command.Language, command.Kind, strings.Replace(path, "\\", "/", -1), command.Module))
+			} else {
+				content = append(content, fmt.Sprintf("go-raml server --language %s --kind %s --ramlfile ../%s --no-apidocs --import-path %s", command.Language, command.Kind, strings.Replace(path, "\\", "/", -1), command.Module))
+			}
 		}
 		return nil
 	})
 	content = append(content, "\n")
 
-	fmt.Println("code/generate.go")
-	ioutil.WriteFile("code/generate.go", []byte(strings.Join(content, "\n")), 0660)
+	if command.Language == "go" {
+		fmt.Println("code/generate.go")
+		ioutil.WriteFile("code/generate.go", []byte(strings.Join(content, "\n")), 0660)
+
+		fmt.Println("code/go.mod")
+		gomod := fmt.Sprintf(mod, command.Module, getGoVersion())
+		ioutil.WriteFile("code/go.mod", []byte(gomod), 0660)
+	} else {
+		fmt.Println("code/generate.sh")
+		ioutil.WriteFile("code/generate.sh", []byte(strings.Join(content, "\n")), 0660)
+	}
 
 	fmt.Println("code/VERSION")
 	ioutil.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
-
-	fmt.Println("code/go.mod")
-	gomod := fmt.Sprintf(mod, command.Module, getGoVersion())
-	ioutil.WriteFile("code/go.mod", []byte(gomod), 0660)
 
 	fmt.Println(".gitignore")
 	exeName := filepath.Base(command.Module)
