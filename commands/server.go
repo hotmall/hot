@@ -79,7 +79,19 @@ func (command *ServerCommand) Execute() error {
 		}
 		return nil
 	})
-	content = append(content, "\n")
+	// content = append(content, "\n")
+
+	if command.Language == "python" {
+		content = append(content, pythonInit)
+
+		if command.Kind == "flask" {
+			start := fmt.Sprintf(gunicornStart, command.Module)
+			ioutil.WriteFile("runtime/bin/start.sh", []byte(start), 0660)
+
+			stop := fmt.Sprintf(gunicornStop, command.Module)
+			ioutil.WriteFile("runtime/bin/stop.sh", []byte(stop), 0660)
+		}
+	}
 
 	if command.Language == "go" {
 		fmt.Println("code/generate.go")
