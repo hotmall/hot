@@ -91,6 +91,9 @@ func (command *ServerCommand) Execute() error {
 			stop := fmt.Sprintf(gunicornStop, command.Module)
 			ioutil.WriteFile("runtime/bin/stop.sh", []byte(stop), 0660)
 		}
+
+		// create virtualenv setup.sh
+		ioutil.WriteFile("runtime/bin/setup.sh", []byte(venvSetup), 0660)
 	}
 
 	if command.Language == "go" {

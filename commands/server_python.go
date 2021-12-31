@@ -23,8 +23,7 @@ do
 done
 `
 
-const gunicornStart = `
-#!/bin/bash
+const gunicornStart = `#!/bin/bash
 EXEC=%s
 APP_HOME=$(cd "$(dirname $0)/..";pwd)
 CMD="gunicorn"
@@ -32,11 +31,31 @@ nohuplog="$APP_HOME/var/log/nohup.out"
 nohup $CMD -c $APP_HOME/etc/conf/gunicorn.pyc --chdir $APP_HOME app:app >> $nohuplog 2>&1 &
 `
 
-const gunicornStop = `
-#!/bin/bash
+const gunicornStop = `#!/bin/bash
 EXEC=%s
 APP_HOME=$(cd "$(dirname $0)/..";pwd)
 CMD="kill -TERM"
 PID=$(cat $APP_HOME/var/run/gunicorn.pid)
 $CMD $PID
+`
+
+const venvSetup = `#!/bin/bash
+
+APP_HOME=$(cd "$(dirname $0)/..";pwd)
+VENV_HOME=$APP_HOME/venv
+echo "Create python virtualenv on [$VENV_HOME]"
+if [ ! -d "$VENV_HOME" ]; then
+    python -m venv $VENV_HOME
+fi
+
+OS=$(uname -s)
+if [ "$OS" = "Darwin" ] || [ "$OS" = "Linux" ]; then
+	. $VENV_HOME/bin/activate
+	pip install autopep8
+	echo "\n    Use [. $VENV_HOME/bin/activate] enter python virtualenv\n"
+else
+    . $VENV_HOME/Scripts/activate
+	pip install autopep8
+	echo -e "\n    Use [. $VENV_HOME/Scripts/activate] enter python virtualenv\n"
+fi
 `
