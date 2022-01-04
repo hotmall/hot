@@ -59,3 +59,10 @@ else
 	echo -e "\n    Use [. $VENV_HOME/Scripts/activate] enter python virtualenv\n"
 fi
 `
+
+const pyGitIgnorePattern = `dist/*.zip
+dist/*.tgz
+runtime/bin/%s
+runtime/venv
+*.pyc
+`

@@ -11,7 +11,7 @@ import (
 	"github.com/hotmall/hot/utils"
 )
 
-const GitIgnorePattern = `
+var gitIgnorePattern = `
 dist/*.zip
 dist/*.tgz
 runtime/bin/%s
@@ -79,7 +79,7 @@ func (command *ServerCommand) Execute() error {
 		}
 		return nil
 	})
-	// content = append(content, "\n")
+	content = append(content, "\n")
 
 	if command.Language == "python" {
 		content = append(content, pythonInit)
@@ -94,6 +94,8 @@ func (command *ServerCommand) Execute() error {
 
 		// create virtualenv setup.sh
 		ioutil.WriteFile("runtime/bin/setup.sh", []byte(venvSetup), 0660)
+
+		gitIgnorePattern = pyGitIgnorePattern
 	}
 
 	if command.Language == "go" {
@@ -113,8 +115,18 @@ func (command *ServerCommand) Execute() error {
 
 	fmt.Println(".gitignore")
 	exeName := filepath.Base(command.Module)
-	ignore := fmt.Sprintf(GitIgnorePattern, exeName)
-	ioutil.WriteFile(".gitignore", []byte(ignore), 0660)
+	ignore := fmt.Sprintf(gitIgnorePattern, exeName)
+	if !isFileExist(".gitignore") {
+		ioutil.WriteFile(".gitignore", []byte(ignore), 0660)
+	}
 
 	return nil
+}
+
+// cek if a file exist
+func isFileExist(filePath string) bool {
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
