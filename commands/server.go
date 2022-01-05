@@ -17,6 +17,11 @@ dist/*.tgz
 runtime/bin/%s
 `
 
+const hotPattern = `#!/bin/bash
+APP_HOME=$(cd "$(dirname $0)";pwd)
+cd $APP_HOME && hot server -l %s --kind %s --module %s
+`
+
 // ServerCommand is executed to generate a go server from a RAML specification
 type ServerCommand struct {
 	Language string // target language
@@ -131,6 +136,10 @@ func (command *ServerCommand) Execute() error {
 	if !isFileExist(".gitignore") {
 		ioutil.WriteFile(".gitignore", []byte(ignore), 0660)
 	}
+
+	fmt.Println("hot.sh")
+	hot := fmt.Sprintf(hotPattern, command.Language, command.Kind, command.Module)
+	ioutil.WriteFile("hot.sh", []byte(hot), 0660)
 
 	return nil
 }
