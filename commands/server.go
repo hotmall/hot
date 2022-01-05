@@ -79,7 +79,7 @@ func (command *ServerCommand) Execute() error {
 		}
 		return nil
 	})
-	content = append(content, "\n")
+	// content = append(content, "\n")
 
 	if command.Language == "python" {
 		content = append(content, pythonInit)
@@ -99,19 +99,31 @@ func (command *ServerCommand) Execute() error {
 	}
 
 	if command.Language == "go" {
+		start := fmt.Sprintf(goStart, command.Module)
+		ioutil.WriteFile("runtime/bin/start.sh", []byte(start), 0660)
+
+		stop := fmt.Sprintf(goStop, command.Module)
+		ioutil.WriteFile("runtime/bin/stop.sh", []byte(stop), 0660)
+
 		fmt.Println("code/generate.go")
-		ioutil.WriteFile("code/generate.go", []byte(strings.Join(content, "\n")), 0660)
+		generate := strings.Join(content, "\n")
+		generate += "\n"
+		ioutil.WriteFile("code/generate.go", []byte(generate), 0660)
 
 		fmt.Println("code/go.mod")
 		gomod := fmt.Sprintf(mod, command.Module, getGoVersion())
-		ioutil.WriteFile("code/go.mod", []byte(gomod), 0660)
+		if !isFileExist("code/go.mod") {
+			ioutil.WriteFile("code/go.mod", []byte(gomod), 0660)
+		}
 	} else {
 		fmt.Println("code/generate.sh")
 		ioutil.WriteFile("code/generate.sh", []byte(strings.Join(content, "\n")), 0660)
 	}
 
 	fmt.Println("code/VERSION")
-	ioutil.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
+	if !isFileExist("code/VERSION") {
+		ioutil.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
+	}
 
 	fmt.Println(".gitignore")
 	exeName := filepath.Base(command.Module)
