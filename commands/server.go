@@ -44,6 +44,7 @@ func (command *ServerCommand) Execute() error {
 		"runtime/namedsql",
 		"runtime/root",
 		"runtime/var/log",
+		"runtime/var/run",
 	}
 
 	mask := utils.Umask(0)
@@ -52,6 +53,16 @@ func (command *ServerCommand) Execute() error {
 	for _, dir := range dirs {
 		fmt.Println(dir)
 		os.MkdirAll(dir, 0755)
+	}
+
+	if command.Language == "python" {
+		fmt.Println("code/var/log")
+		os.MkdirAll("code/var/log", 0755)
+
+		fmt.Println("code/var/log/.gitignore")
+		if !isFileExist("code/var/log/.gitignore") {
+			ioutil.WriteFile("code/var/log/.gitignore", []byte("*.out"), 0660)
+		}
 	}
 
 	var content []string
@@ -140,6 +151,16 @@ func (command *ServerCommand) Execute() error {
 	fmt.Println("hot.sh")
 	hot := fmt.Sprintf(hotPattern, command.Language, command.Kind, command.Module)
 	ioutil.WriteFile("hot.sh", []byte(hot), 0660)
+
+	fmt.Println("runtime/var/log/.gitignore")
+	if !isFileExist("runtime/var/log/.gitignore") {
+		ioutil.WriteFile("runtime/var/log/.gitignore", []byte("*.out\n*.log"), 0660)
+	}
+
+	fmt.Println("runtime/var/run/.gitignore")
+	if !isFileExist("runtime/var/run/.gitignore") {
+		ioutil.WriteFile("runtime/var/run/.gitignore", []byte("*.pid"), 0660)
+	}
 
 	return nil
 }
