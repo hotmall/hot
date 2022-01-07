@@ -44,19 +44,28 @@ const venvSetup = `#!/bin/bash
 APP_HOME=$(cd "$(dirname $0)/..";pwd)
 VENV_HOME=$APP_HOME/venv
 echo "Create python virtualenv on [$VENV_HOME]"
-if [ ! -d "$VENV_HOME" ]; then
-    python -m venv $VENV_HOME
+PY_CMD=python
+OS=$(uname -s)
+if [ "$OS" = "Linux" ]; then
+    PY_CMD=python3
 fi
 
-OS=$(uname -s)
+if [ ! -d "$VENV_HOME" ]; then
+    $PY_CMD -m venv $VENV_HOME
+fi
+
 if [ "$OS" = "Darwin" ] || [ "$OS" = "Linux" ]; then
-	. $VENV_HOME/bin/activate
-	pip install autopep8
-	echo "\n    Use [. $VENV_HOME/bin/activate] enter python virtualenv\n"
+    . $VENV_HOME/bin/activate
 else
     . $VENV_HOME/Scripts/activate
-	pip install autopep8
-	echo -e "\n    Use [. $VENV_HOME/Scripts/activate] enter python virtualenv\n"
+fi
+
+pip install autopep8
+
+if [ "$OS" = "Darwin" ]; then
+    echo "\n    Use [. $VENV_HOME/bin/activate] enter python virtualenv\n"
+else
+    echo -e "\n    Use [. $VENV_HOME/Scripts/activate] enter python virtualenv\n"
 fi
 `
 
