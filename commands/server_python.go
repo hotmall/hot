@@ -64,6 +64,8 @@ pip install autopep8
 
 if [ "$OS" = "Darwin" ]; then
     echo "\n    Use [. $VENV_HOME/bin/activate] enter python virtualenv\n"
+elif [ "$OS" = "Linux" ]; then
+    echo -e "\n    Use [. $VENV_HOME/bin/activate] enter python virtualenv\n"
 else
     echo -e "\n    Use [. $VENV_HOME/Scripts/activate] enter python virtualenv\n"
 fi
