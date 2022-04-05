@@ -115,8 +115,10 @@ func (command *ServerCommand) Execute() error {
 	}
 
 	if command.Language == "go" {
-		start := fmt.Sprintf(goStart, command.Module)
-		ioutil.WriteFile("runtime/bin/start.sh", []byte(start), 0660)
+		if !isFileExist("runtime/bin/start.sh") {
+			start := fmt.Sprintf(goStart, command.Module)
+			ioutil.WriteFile("runtime/bin/start.sh", []byte(start), 0660)
+		}
 
 		stop := fmt.Sprintf(goStop, command.Module)
 		ioutil.WriteFile("runtime/bin/stop.sh", []byte(stop), 0660)
