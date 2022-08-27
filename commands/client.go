@@ -28,7 +28,11 @@ func (command *ClientCommand) Execute() error {
 		if info == nil {
 			return nil
 		}
-		if info.IsDir() && info.Name() == "types" {
+		if info.IsDir() {
+			if info.Name() == path {
+				// 如果是 root 目录，返回 nil
+				return nil
+			}
 			return filepath.SkipDir
 		}
 
