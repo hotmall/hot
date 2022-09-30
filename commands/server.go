@@ -164,6 +164,11 @@ func (command *ServerCommand) Execute() error {
 		ioutil.WriteFile("runtime/var/run/.gitignore", []byte("*.pid"), 0660)
 	}
 
+	fmt.Println("dist/.gitignore")
+	if !isFileExist("dist/.gitignore") {
+		ioutil.WriteFile("dist/.gitignore", []byte("*.tgz\n*.zip\n*.gz"), 0660)
+	}
+
 	return nil
 }
 
