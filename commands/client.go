@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,7 +9,7 @@ import (
 
 //log "github.com/Sirupsen/logrus"
 
-//ClientCommand is executed to generate client from a RAML specification
+// ClientCommand is executed to generate client from a RAML specification
 type ClientCommand struct {
 	Language    string
 	Kind        string
@@ -18,7 +17,7 @@ type ClientCommand struct {
 	Module      string
 }
 
-//Execute generates a client from a RAML specification
+// Execute generates a client from a RAML specification
 func (command *ClientCommand) Execute() error {
 	//log.Debug("Generating a rest client for ", command.Language)
 
@@ -45,11 +44,11 @@ func (command *ClientCommand) Execute() error {
 	content = append(content, "\n")
 
 	fmt.Println("generate.go")
-	ioutil.WriteFile("generate.go", []byte(strings.Join(content, "\n")), 0660)
+	os.WriteFile("generate.go", []byte(strings.Join(content, "\n")), 0660)
 
 	fmt.Println("go.mod")
 	gomod := fmt.Sprintf(mod, command.Module, getGoVersion())
-	ioutil.WriteFile("go.mod", []byte(gomod), 0660)
+	os.WriteFile("go.mod", []byte(gomod), 0660)
 
 	return nil
 }

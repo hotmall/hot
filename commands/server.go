@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -61,7 +60,7 @@ func (command *ServerCommand) Execute() error {
 
 		fmt.Println("code/var/log/.gitignore")
 		if !isFileExist("code/var/log/.gitignore") {
-			ioutil.WriteFile("code/var/log/.gitignore", []byte("*.out"), 0660)
+			os.WriteFile("code/var/log/.gitignore", []byte("*.out"), 0660)
 		}
 	}
 
@@ -102,14 +101,14 @@ func (command *ServerCommand) Execute() error {
 
 		if command.Kind == "flask" {
 			start := fmt.Sprintf(gunicornStart, command.Module)
-			ioutil.WriteFile("runtime/bin/start.sh", []byte(start), 0660)
+			os.WriteFile("runtime/bin/start.sh", []byte(start), 0660)
 
 			stop := fmt.Sprintf(gunicornStop, command.Module)
-			ioutil.WriteFile("runtime/bin/stop.sh", []byte(stop), 0660)
+			os.WriteFile("runtime/bin/stop.sh", []byte(stop), 0660)
 		}
 
 		// create virtualenv setup.sh
-		ioutil.WriteFile("runtime/bin/setup.sh", []byte(venvSetup), 0660)
+		os.WriteFile("runtime/bin/setup.sh", []byte(venvSetup), 0660)
 
 		gitIgnorePattern = pyGitIgnorePattern
 	}
@@ -117,56 +116,56 @@ func (command *ServerCommand) Execute() error {
 	if command.Language == "go" {
 		if !isFileExist("runtime/bin/start.sh") {
 			start := fmt.Sprintf(goStart, command.Module)
-			ioutil.WriteFile("runtime/bin/start.sh", []byte(start), 0660)
+			os.WriteFile("runtime/bin/start.sh", []byte(start), 0660)
 		}
 
 		stop := fmt.Sprintf(goStop, command.Module)
-		ioutil.WriteFile("runtime/bin/stop.sh", []byte(stop), 0660)
+		os.WriteFile("runtime/bin/stop.sh", []byte(stop), 0660)
 
 		fmt.Println("code/generate.go")
 		generate := strings.Join(content, "\n")
 		generate += "\n"
-		ioutil.WriteFile("code/generate.go", []byte(generate), 0660)
+		os.WriteFile("code/generate.go", []byte(generate), 0660)
 
 		fmt.Println("code/go.mod")
 		gomod := fmt.Sprintf(mod, command.Module, getGoVersion())
 		if !isFileExist("code/go.mod") {
-			ioutil.WriteFile("code/go.mod", []byte(gomod), 0660)
+			os.WriteFile("code/go.mod", []byte(gomod), 0660)
 		}
 	} else {
 		fmt.Println("code/generate.sh")
-		ioutil.WriteFile("code/generate.sh", []byte(strings.Join(content, "\n")), 0660)
+		os.WriteFile("code/generate.sh", []byte(strings.Join(content, "\n")), 0660)
 	}
 
 	fmt.Println("code/VERSION")
 	if !isFileExist("code/VERSION") {
-		ioutil.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
+		os.WriteFile("code/VERSION", []byte("0.1.0"), 0660)
 	}
 
 	fmt.Println(".gitignore")
 	exeName := filepath.Base(command.Module)
 	ignore := fmt.Sprintf(gitIgnorePattern, exeName)
 	if !isFileExist(".gitignore") {
-		ioutil.WriteFile(".gitignore", []byte(ignore), 0660)
+		os.WriteFile(".gitignore", []byte(ignore), 0660)
 	}
 
 	fmt.Println("hot.sh")
 	hot := fmt.Sprintf(hotPattern, command.Language, command.Kind, command.Module)
-	ioutil.WriteFile("hot.sh", []byte(hot), 0660)
+	os.WriteFile("hot.sh", []byte(hot), 0660)
 
 	fmt.Println("runtime/var/log/.gitignore")
 	if !isFileExist("runtime/var/log/.gitignore") {
-		ioutil.WriteFile("runtime/var/log/.gitignore", []byte("*.out\n*.log"), 0660)
+		os.WriteFile("runtime/var/log/.gitignore", []byte("*.out\n*.log"), 0660)
 	}
 
 	fmt.Println("runtime/var/run/.gitignore")
 	if !isFileExist("runtime/var/run/.gitignore") {
-		ioutil.WriteFile("runtime/var/run/.gitignore", []byte("*.pid"), 0660)
+		os.WriteFile("runtime/var/run/.gitignore", []byte("*.pid"), 0660)
 	}
 
 	fmt.Println("dist/.gitignore")
 	if !isFileExist("dist/.gitignore") {
-		ioutil.WriteFile("dist/.gitignore", []byte("*.tgz\n*.zip\n*.gz"), 0660)
+		os.WriteFile("dist/.gitignore", []byte("*.tgz\n*.zip\n*.gz"), 0660)
 	}
 
 	return nil
