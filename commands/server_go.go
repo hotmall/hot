@@ -35,13 +35,10 @@ fi
 
 # Start the service
 echo "Starting $EXEC..."
-if ! nohup "$CMD" -p "$APP_HOME" -port "$PORT" > "$NOHUP_LOG" 2>&1 & then
-    echo "ERROR: Failed to start $EXEC" >&2
-    exit 1
-fi
+nohup "$CMD" -p "$APP_HOME" -port "$PORT" > "$NOHUP_LOG" 2>&1 &
+PID=$!
 
 # Get the PID and verify process is running
-PID=$!
 echo "Service $EXEC started with PID $PID"
 
 # Wait a moment then check if process is still running
@@ -56,7 +53,6 @@ fi
 echo "Log output can be found at: $NOHUP_LOG"
 echo "Startup completed successfully"
 exit 0
-
 `
 
 const goStop = `#!/bin/sh
@@ -121,5 +117,4 @@ else
     echo "Successfully stopped $EXEC (PID $PID)"
     exit 0
 fi
-
 `
